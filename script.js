@@ -10,7 +10,7 @@ function typingAnimation(mEl) {
         return new Promise((res) => {
             setTimeout(function () {
                 const textArray = tx.split("");
-
+                console.log("hello");
                 res(textArray);
             }, 1000);
         });
