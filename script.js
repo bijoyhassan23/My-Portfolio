@@ -8,9 +8,10 @@ function typingAnimation(mEl) {
     }
     function textFun(tx) {
         return new Promise((res) => {
-            setTimeout(function () {
-                const textArray = tx.split("");
+            const textArray = tx.split("");
+            let plText = "";
 
+            setTimeout(function () {
                 res(textArray);
             }, 1000);
         });
