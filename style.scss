@@ -1,0 +1,115 @@
+@import "_colors";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+    color: white;
+}
+html {
+    font-size: 100%;
+}
+ul {
+    list-style: none;
+}
+body {
+    background-color: $color-bg-3;
+}
+
+.full-content {
+    display: flex;
+
+    .sidebar-menu {
+        background-color: $color-bg-3;
+        max-width: 260px;
+        transition: max-width 0.3s;
+        flex-grow: 1;
+        @media (max-width: 992px) {
+            max-width: 0px;
+        }
+        .sidebar-content {
+            height: 100vh;
+            padding: 16px 16px 8px 16px;
+            position: sticky;
+            top: 0px;
+            left: 0px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            .info {
+                text-align: center;
+                img {
+                    width: 100%;
+                    max-width: 160px;
+                    border-radius: 50%;
+                    padding: 8px;
+                    background-color: $color-bg-2;
+                }
+                .name {
+                    font-size: 1.3125rem;
+                    font-weight: 500;
+                }
+            }
+            .sidebar-nav {
+                text-align: center;
+                ul {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    li {
+                        a {
+                            text-decoration: none;
+                            font-size: 16px;
+                            padding: 10px 0px;
+                            transition: color 0.3s;
+                            &:hover,
+                            &:active {
+                                color: $color-main;
+                            }
+                        }
+                    }
+                }
+            }
+            .social-icon {
+                ul {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 24px;
+                    flex-wrap: wrap;
+                    li {
+                        a {
+                            font-size: 14px;
+                            i {
+                                transition: color 0.3s;
+                                &:hover {
+                                    color: $color-main;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .main-content {
+        flex-grow: 1;
+        z-index: 2;
+        section.hero {
+            min-height: 100vh;
+            background: url(Images/hero-bg.jpg) no-repeat fixed center;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .hero-content {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
+}
