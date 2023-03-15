@@ -280,7 +280,13 @@ section {
                 color: $color-big-header-1;
                 opacity: 0.1;
                 @media (max-width: 1200px) {
+                    font-size: calc(1.95rem + 7vw);
+                }
+                @media (max-width: 992px) and (min-width: 596px) {
                     font-size: calc(1.95rem + 8.4vw);
+                }
+                @media (max-width: 450px) {
+                    font-size: calc(1.95rem + 5vw);
                 }
             }
             .main-header {
@@ -647,18 +653,8 @@ section {
                 margin-bottom: 3rem;
             }
             .tab-body {
-                // columns: 3;
-                // gap: 20px;
-                // transition: 5s;
+                transition: 0.5s;
                 position: relative;
-
-                // @media (max-width: 768px) {
-                //     columns: 2;
-                // }
-
-                // @media (max-width: 576px) {
-                //     columns: 1;
-                // }
 
                 .tab-element {
                     width: calc(100% / 3);
@@ -671,6 +667,7 @@ section {
                         width: 100%;
                     }
                     position: absolute;
+                    transition: 0.7s;
                     .portfolio-card {
                         position: relative;
                         margin-bottom: 20px;
@@ -708,6 +705,69 @@ section {
                             }
                             img.bg-card {
                                 transform: scale(1.1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        section.testimonial {
+            background-color: $color-bg-1;
+            padding-left: 6px;
+            padding-right: 6px;
+            .container {
+                width: calc(100vw - (260px + 20px));
+                overflow: hidden;
+                @media (max-width: 992px) {
+                    width: calc(100vw - 20px);
+                }
+            }
+            .sec-content {
+                overflow: hidden;
+                // width: calc(100vw - (260px + 12px));
+                // @media (max-width: 992px) {
+                //     width: calc(100vw - 12px);
+                // }
+                cursor: grab;
+                .slider-sec {
+                    display: flex;
+                    .card {
+                        background-color: $color-bg-3;
+                        padding: 3rem;
+                        border-radius: 6px;
+                        .card-header {
+                            display: flex;
+                            align-items: center;
+                            gap: 1rem;
+                            margin-bottom: 1.5rem;
+                            .client-img {
+                                border-radius: 50%;
+                                height: 65px;
+                                width: 65px;
+                                object-fit: cover;
+                                border: solid 1px $color-main;
+                            }
+                            .name-title {
+                                h5 {
+                                    font-size: 1rem;
+                                    font-weight: 600;
+                                }
+                                .title {
+                                    font-weight: 500;
+                                    color: $color-big-header-1;
+                                }
+                            }
+                        }
+                        .card-body {
+                            margin-bottom: 1rem;
+                            p {
+                                font-weight: 500;
+                            }
+                        }
+                        .ratings {
+                            display: flex;
+                            i {
+                                color: #ffc107;
                             }
                         }
                     }

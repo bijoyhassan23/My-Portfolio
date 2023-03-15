@@ -97,59 +97,239 @@ async function portfolios() {
     let allCategory = ["All"];
     getPorfolios.innerHTML = "";
     getTabHeading.innerHTML = "";
+    let allElement = [];
 
-    let cardPos = [];
-    let colNum = 3;
-    if (window.innerWidth <= 576) {
-        colNum = 1;
-    } else if (window.innerWidth <= 768) {
-        colNum = 2;
+    for (let catEle of data) {
+        allCategory = allCategory.concat(catEle.category);
     }
 
-    let currentCol = 0;
-    for (let i = 0; i < colNum; i++) {
-        cardPos.push([]);
+    allCategory = [...new Set(allCategory)];
+    let categoryItem = {};
+
+    for (let cate of allCategory) {
+        categoryItem[cate] = [];
     }
-    let colWidth = getPorfolios.offsetWidth / colNum;
+
     for (let element of data) {
-        if (currentCol >= cardPos.length) {
-            currentCol = 0;
-        }
         const cloneCard = getCard.cloneNode(true);
         cloneCard.querySelector(".bg-card").src = element.thumImg;
         cloneCard.querySelector(".title").innerText = element.title;
         cloneCard.querySelector(".category").innerText = element.category;
         getPorfolios.append(cloneCard);
-        cloneCard.style.left = `${colWidth * currentCol}px`;
-        cardPos[currentCol].push(cloneCard);
-        currentCol++;
-        allCategory = allCategory.concat(element.category);
+        allElement.push(cloneCard);
+        categoryItem["All"].push(cloneCard);
+        for (let setCategory of element.category) {
+            for (let elem in categoryItem) {
+                if (setCategory === elem) {
+                    categoryItem[elem].push(cloneCard);
+                }
+            }
+        }
     }
-    allCategory = [...new Set(allCategory)];
 
+    let allHead = [];
     for (let heading of allCategory) {
         let headElement = document.createElement("li");
         headElement.innerHTML = heading;
         getTabHeading.append(headElement);
+        allHead.push(headElement);
         headElement.addEventListener("click", function () {
-            filterFun(heading, data);
+            filterFun(heading);
+            activeHead();
+            this.classList.add("active");
+        });
+    }
+    allHead[0].classList.add("active");
+    function activeHead() {
+        for (let i of allHead) {
+            i.classList.remove("active");
+        }
+    }
+
+    let allEleCopy = [...allElement];
+    let prevSet2 = [];
+
+    function filterFun(catValue) {
+        allElement = categoryItem[catValue];
+        let hideAbleElements = allEleCopy.filter((elemen) => {
+            return allElement.indexOf(elemen) == -1;
+        });
+
+        for (let showElement of allElement) {
+            showElement.style.display = "block";
+            setTimeout(function () {
+                showElement.style.transform = "scale(1)";
+            }, 0);
+        }
+
+        if (prevSet2.length) {
+            for (let x of prevSet2) {
+                clearTimeout(x);
+            }
+        }
+
+        for (let hideElement of hideAbleElements) {
+            hideElement.style.transform = "scale(0)";
+            let setT = setTimeout(function () {
+                hideElement.style.display = "none";
+            }, 700);
+            prevSet2.push(setT);
+        }
+        setLeftTop();
+    }
+
+    function setLeftTop() {
+        let cardPos = [];
+        let colNum = 3;
+        let contentHeihgt = 0;
+        if (window.innerWidth <= 576) {
+            colNum = 1;
+        } else if (window.innerWidth <= 768) {
+            colNum = 2;
+        }
+        for (let i = 0; i < colNum; i++) {
+            cardPos.push([]);
+        }
+        let colCount = 0;
+        for (let singEle of allElement) {
+            if (colCount >= colNum) {
+                colCount = 0;
+            }
+            cardPos[colCount].push(singEle);
+            colCount++;
+        }
+        let colWidth = getPorfolios.offsetWidth / colNum;
+        cardPos.forEach(function (cols, index, arr) {
+            const getPorfolios2 = document.querySelector(".tab-body");
+            let top = 0;
+            let left = colWidth * index;
+            for (let ele of cols) {
+                ele.style.top = `${top}px`;
+                ele.style.left = `${left}px`;
+                top += ele.scrollHeight;
+                if (top > contentHeihgt) {
+                    contentHeihgt = top;
+                }
+            }
+            getPorfolios2.style.height = `${contentHeihgt}px`;
         });
     }
 
-    function setTabHeight() {
-        for (let cols of cardPos) {
-            let top = 0;
-            for (let ele of cols) {
-                ele.style.top = `${top}px`;
-                top += ele.scrollHeight;
-            }
-        }
-        const getPorfolios2 = document.querySelector(".tab-body");
-        getPorfolios2.style.height = `${getPorfolios2.scrollHeight}px`;
-    }
-    window.addEventListener("load", setTabHeight);
+    window.addEventListener("load", setLeftTop);
+    window.addEventListener("resize", setLeftTop);
 }
 
 portfolios();
 
-window.addEventListener("resize", portfolios);
+class slider {
+    constructor(
+        mainDiv,
+        secondaryDiv,
+        innerDiv,
+        sliderCount,
+        sliderGap,
+        sectionClass
+    ) {
+        this.mainDiv = document.querySelector(mainDiv);
+        this.secondaryDiv = this.mainDiv.querySelector(secondaryDiv);
+        this.innerDiv = this.secondaryDiv.querySelectorAll(innerDiv);
+        this.sliderGap = sliderGap;
+        this.sliderCount = sliderCount;
+        if (window.innerWidth <= 768) {
+            this.sliderCount = 1;
+        }
+        this.fullWidth = document.querySelector(sectionClass).scrollWidth;
+        this.sliderWidth = this.fullWidth / this.sliderCount;
+        this.totalSliderWidth =
+            (this.fullWidth / this.sliderCount) * this.innerDiv.length;
+    }
+    setSliderWidth() {
+        for (let element of this.innerDiv) {
+            element.style.minWidth = `${
+                this.sliderWidth - this.sliderGap * 2
+            }px`;
+            element.style.margin = `${this.sliderGap}px`;
+        }
+    }
+    sliderSnap(transValue) {
+        this.secondaryDiv.style.transition = `0.3s`;
+        this.secondaryDiv.style.transform = `translateX(${transValue}px)`;
+        setTimeout(() => {
+            this.secondaryDiv.style.transition = `0s`;
+        }, 300);
+    }
+    scrolSnapPoint(curen2) {
+        let point = [0];
+        let p = 0;
+        let cur = 0;
+        let curentP = Math.abs(curen2);
+        for (let points of this.innerDiv) {
+            p += this.sliderWidth;
+            point.push(p);
+        }
+
+        for (let i = 0; i < point.length - 2; i++) {
+            if (
+                curentP >= point[i] &&
+                curentP <= point[i] + this.sliderWidth / 2
+            ) {
+                this.sliderSnap(point[i] * -1);
+                cur = point[i] * -1;
+                break;
+            } else if (
+                curentP > point[i] + this.sliderWidth / 2 &&
+                curentP < point[i] + this.sliderWidth
+            ) {
+                this.sliderSnap(point[i + 1] * -1);
+                cur = point[i + 1] * -1;
+                break;
+            }
+        }
+        return cur;
+    }
+    slide() {
+        this.setSliderWidth();
+        let grabStatus = false;
+        let grabStartPoint = 0;
+        let currentValue = 0;
+        this.mainDiv.addEventListener("pointerdown", (event) => {
+            grabStatus = true;
+            grabStartPoint = event.clientX - currentValue;
+            event.preventDefault();
+        });
+        document.addEventListener("pointermove", (event) => {
+            if (grabStatus) {
+                event.preventDefault();
+                const x = event.clientX - grabStartPoint;
+                this.secondaryDiv.style.transform = `translateX(${x}px)`;
+                currentValue = x;
+            }
+        });
+        document.addEventListener("pointerup", (event) => {
+            grabStatus = false;
+            event.preventDefault();
+
+            let sliderReturnWidth = -(this.totalSliderWidth - this.fullWidth);
+            if (currentValue > 0) {
+                this.sliderSnap(0);
+                currentValue = 0;
+            } else if (currentValue < sliderReturnWidth) {
+                this.sliderSnap(sliderReturnWidth);
+                currentValue = sliderReturnWidth;
+            } else {
+                currentValue = this.scrolSnapPoint(currentValue);
+            }
+        });
+    }
+}
+
+const testimonial = new slider(
+    ".testimonial .sec-content",
+    ".slider-sec",
+    ".card",
+    2,
+    10,
+    ".testimonial .container"
+);
+
+testimonial.slide();
